@@ -67,66 +67,31 @@ class RawChurnScheduleConfig(ChurnScheduleConfig):
     grad_mu: float = 0.5
     grad_sigma: float = 1.0
 
-def get_caption_matching_config() -> VLMRewardPromptConfig:
-    vlm_config = VLMRewardPromptConfig(
-        reward_name="caption_matching",
-        prompt_template='Does this image match the caption "{prompt}"? Answer Yes or No.',
-        target_token="Yes",
-        contrast_token="No",
-    )
 
-    return vlm_config
-
-def get_professional_quality_reward_config() -> VLMRewardPromptConfig:
-    vlm_config = VLMRewardPromptConfig(
-        reward_name="professional_quality",
-        prompt_template="Is this image of professional quality? Answer with Yes or No.",
-        target_token="Yes",
-        contrast_token="No",
-    )
-
-    return vlm_config
-
-def get_photorealism_config() -> VLMRewardPromptConfig:
-    vlm_config = VLMRewardPromptConfig(
-        reward_name="photorealism",
-        prompt_template="Does this image look photorealistic? Answer Yes or No.",
-        target_token="Yes",
-        contrast_token="No",
-    )
-
-    return vlm_config
-
-REWARD_CONFIGS = {
-    "caption_matching": get_caption_matching_config,
-    "professional_quality": get_professional_quality_reward_config,
-    "photorealism": get_photorealism_config,
-}
-
-def get_reward_config(name: str) -> VLMRewardPromptConfig:
-    if name not in REWARD_CONFIGS:
-        raise ValueError(f"Unknown reward config: {name}. Available: {list(REWARD_CONFIGS.keys())}")
-
-    return REWARD_CONFIGS[name]()
-
+VLM_ALIGNMENT_CONFIG = VLMRewardPromptConfig(
+    reward_name="caption_matching",
+    prompt_template='Does this image match the caption "{prompt}"? Answer Yes or No.',
+    target_token="Yes",
+    contrast_token="No",
+)
 
 REWARD_PRESETS = {
-    "pickscore": lambda: [
+    "pickscore": [
         RewardSpec(kind="pickscore", weight=1.0),
     ],
-    "vlm_alignment": lambda: [
-        RewardSpec(kind="vlm", weight=1.0, prompt_config=get_caption_matching_config()),
+    "vlm_alignment": [
+        RewardSpec(kind="vlm", weight=1.0, prompt_config=VLM_ALIGNMENT_CONFIG),
     ],
-    "combined": lambda: [
+    "combined": [
         RewardSpec(kind="pickscore", weight=1.0),
-        RewardSpec(kind="vlm", weight=0.1, prompt_config=get_caption_matching_config()),
+        RewardSpec(kind="vlm", weight=0.1, prompt_config=VLM_ALIGNMENT_CONFIG),
     ],
 }
 
 def get_reward_preset(name: str) -> list[RewardSpec]:
     if name not in REWARD_PRESETS:
         raise ValueError(f"Unknown reward preset: {name}. Available: {list(REWARD_PRESETS.keys())}")
-    return REWARD_PRESETS[name]()
+    return REWARD_PRESETS[name]
 
 
 @dataclass

@@ -9,8 +9,6 @@ Text-to-Image Models**<br/>
 David McAllister, Miika Aittala, Tero Karras, Janne Hellsten, Angjoo Kanazawa, Timo Aila, Samuli Laine<br/>
 https://arxiv.org/abs/TODO.TODO
 
-Powered by Stability AI.
-
 ## Requirements
 
 - **GPUs**: At least 4 NVIDIA GPUs with at least 48GB memory (tested on A6000, A100, and H200)
@@ -34,6 +32,8 @@ hf auth login
 mkdir -p prompt_sets
 curl -o prompt_sets/pickscore_train.txt https://raw.githubusercontent.com/yifan123/flow_grpo/9745241cf1101407e9b518dd4f10498092150522/dataset/pickscore/train.txt
 ```
+
+We have tested the code with specific package versions [listed here](resources/pip_list.txt).
 
 ## Pre-trained checkpoints
 
@@ -75,7 +75,9 @@ To reproduce the results from our paper, launch the training script using at lea
 torchrun --nproc_per_node=8 train.py
 ```
 
-We have verified that the the training script produces correct results with 4, 8, 16, 24, and 32 GPUs, and should not require more than 48GB of VRAM.
+We have verified that the the training script produces correct results with 4, 8, 16, 24, and 32 GPUs, and does not require more than 48GB of VRAM in these cases.
+The results are expected to be reasonably good around 100 epochs, which takes about 12 hours to reach using 4 H200 GPUs, or 1.5 hours using 32 H200 GPUs.
+By default, the training continues all the way until 1000 epochs to illustrate the tradeoffs associated with extended RL training.
 
 ### Outputs
 
@@ -104,15 +106,21 @@ Evaluate a given checkpoint using various metrics:
 export CHECKPOINT=https://huggingface.co/nvidia/finite-difference-flow-optimization/tree/main/fdfo-combined-reward-no-cfg/epoch-0000100
 
 # Training-time rewards
-torchrun --nproc_per_node=8 python metrics.py --checkpoint $CHECKPOINT \
+# 8min on 8xH200
+# pickscore           22.4704
+# vlm_prompt          61.7239
+torchrun --nproc_per_node=8 metrics.py --checkpoint $CHECKPOINT \
     --prompt-set pickscore_train --num-prompts 4096 --num-repeats 1 --metrics pickscore vlm_alignment
 
 # External control metrics
-torchrun --nproc_per_node=8 python metrics.py --checkpoint $CHECKPOINT \
+# 22min on 8xH200
+# clip_h14            35.7743
+# clip_l14            28.1932
+# dreamsim_diversity  0.4550
+# hpsv2               28.2949
+torchrun --nproc_per_node=8 metrics.py --checkpoint $CHECKPOINT \
     --prompt-set hpdv2 --num-prompts 3200 --num-repeats 4 --metrics hpsv2 clip_h14 clip_l14 dreamsim_diversity
 ```
-
-Note that the above commands may take up to an hour to complete.
 
 ### Available metrics
 
@@ -124,7 +132,7 @@ Note that the above commands may take up to an hour to complete.
 
 The FDFO source code and pretrained checkpoints are licensed under the [NVIDIA Source Code License v1 (Non-Commercial)](LICENSE.txt). Copyright &copy; 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 
-The Stable Diffusion 3.5 Medium Model is licensed under the [Stability AI Community License](https://stability.ai/community-license-agreement). Copyright &copy; Stability AI Ltd. All rights reserved.
+The Stable Diffusion 3.5 Medium Model is licensed under the [Stability AI Community License](https://stability.ai/community-license-agreement). Copyright &copy; Stability AI Ltd. All rights reserved. Powered by Stability AI.
 
 ## Development
 

@@ -71,7 +71,7 @@ def load_pipe(checkpoint=None, dtype=torch.bfloat16, device=torch.device('cuda')
     lora_pipe.orig_transformer = lora_pipe.transformer
     lora_pipe.transformer = copy.deepcopy(lora_pipe.transformer)
 
-    # Flow-GRPO original implementation.
+    # Load LoRA.
     lora_pipe.transformer = peft.PeftModel.from_pretrained(lora_pipe.transformer, checkpoint).eval()
     return lora_pipe
 
@@ -95,7 +95,7 @@ def run_pipe(pipe, prompts, seed=0, num_inference_steps=30, guidance_scale=4.5, 
 
 
 class VLM:
-    """Vision-Language Model for yes/no question scoring (e.g., prompt adherence)."""
+    """Vision-Language Model for yes/no question scoring (e.g., prompt alignment)."""
 
     MODEL_SPECS = {
         'Qwen/Qwen2.5-VL-7B-Instruct':  dict(dtype=torch.bfloat16, fsdp=False),
@@ -131,7 +131,7 @@ class VLM:
                 self.model,
                 sharding_strategy=torch.distributed.fsdp.ShardingStrategy.FULL_SHARD,
                 mixed_precision=torch.distributed.fsdp.MixedPrecision(
-                    param_dtype=self.spec['dtype'], 
+                    param_dtype=self.spec['dtype'],
                     buffer_dtype=self.spec['dtype']
                 ),
                 auto_wrap_policy=torch.distributed.fsdp.wrap.size_based_auto_wrap_policy,

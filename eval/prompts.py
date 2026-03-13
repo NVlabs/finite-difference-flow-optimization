@@ -15,6 +15,7 @@ Supported prompt sets:
 
 import os
 import json
+import huggingface_hub
 from typing import List
 from fdfo import utils
 
@@ -72,12 +73,10 @@ def load_prompts(name: str) -> List[str]:
 
 def download_hpdv2():
     """Download HPD v2 prompts from HuggingFace."""
-    from huggingface_hub import hf_hub_download
-
     print("Downloading HPD v2 prompts from HuggingFace...")
     prompts = []
     for category in ['anime', 'concept-art', 'paintings', 'photo']:
-        path = hf_hub_download('zhwang/HPDv2', filename=f'benchmark/{category}.json', repo_type='dataset')
+        path = huggingface_hub.hf_hub_download('zhwang/HPDv2', filename=f'benchmark/{category}.json', repo_type='dataset')
         with open(path, 'rb') as f:
             prompts += json.load(f)
 

@@ -109,7 +109,7 @@ class Dirac(Density):
 
 class Scheduler:
     def __init__(self):
-        pass 
+        pass
 
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(f'{k}={v}' for k, v in self.__dict__.items())})"

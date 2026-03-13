@@ -12,11 +12,11 @@ Usage:
     export CHECKPOINT=https://huggingface.co/nvidia/finite-difference-flow-optimization/tree/main/fdfo-combined-reward-no-cfg/epoch-0000100
 
     # Training-time rewards
-    torchrun --nproc_per_node=8 python metrics.py --checkpoint $CHECKPOINT \
+    torchrun --nproc_per_node=8 metrics.py --checkpoint $CHECKPOINT \
         --prompt-set pickscore_train --num-prompts 4096 --num-repeats 1 --metrics pickscore vlm_alignment
 
     # External control metrics
-    torchrun --nproc_per_node=8 python metrics.py --checkpoint $CHECKPOINT \
+    torchrun --nproc_per_node=8 metrics.py --checkpoint $CHECKPOINT \
         --prompt-set hpdv2 --num-prompts 3200 --num-repeats 4 --metrics hpsv2 clip_h14 clip_l14 dreamsim_diversity
 """
 
