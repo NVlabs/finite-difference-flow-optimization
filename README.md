@@ -7,7 +7,7 @@ This repository contains the official reference implementation of FDFO, a method
 **Finite Difference Flow Optimization for RL Post-Training of
 Text-to-Image Models**<br/>
 David McAllister, Miika Aittala, Tero Karras, Janne Hellsten, Angjoo Kanazawa, Timo Aila, Samuli Laine<br/>
-https://arxiv.org/abs/TODO.TODO
+https://arxiv.org/abs/2603.12893
 
 ## Requirements
 
