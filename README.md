@@ -56,6 +56,13 @@ python generate.py --checkpoint $CHECKPOINT --out out.jpg
 
 This should take a couple of minutes and produce a result like [this one](resources/out.jpg).
 
+**Note:** If a checkpoint was trained using classifier-free guidance, the generation should also be done using the same guidance scale:
+
+```bash
+export CHECKPOINT=https://huggingface.co/nvidia/finite-difference-flow-optimization/tree/main/fdfo-combined-reward-cfg-4.5/epoch-0000100
+python generate.py --checkpoint $CHECKPOINT --out out.jpg --guidance-scale 4.5
+```
+
 ## Training
 
 ### Sanity check using a single GPU
